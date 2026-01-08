@@ -19,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.healthapp.intervaltimer.data.TimerSession
@@ -104,146 +105,168 @@ fun TimerScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Timer Configuration Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Timer Configuration",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    // Activity Time Slider
-                    Text(
-                        text = "Activity Time: ${uiState.config.activityMinutes} minutes",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Slider(
-                        value = uiState.config.activityMinutes.toFloat(),
-                        onValueChange = { viewModel.updateActivityMinutes(it.toInt()) },
-                        valueRange = 10f..120f,
-                        steps = 109,
-                        enabled = !uiState.isRunning,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    // Rest Time Slider
-                    Text(
-                        text = "Rest Time: ${uiState.config.restMinutes} minutes",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Slider(
-                        value = uiState.config.restMinutes.toFloat(),
-                        onValueChange = { viewModel.updateRestMinutes(it.toInt()) },
-                        valueRange = 5f..180f,
-                        steps = 174,
-                        enabled = !uiState.isRunning
-                    )
-                }
-            }
-
-            // Start/Stop Button
-            Button(
-                onClick = {
-                    if (uiState.isRunning) {
-                        viewModel.stopTimer()
-                    } else {
-                        viewModel.startTimer()
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(bottom = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (uiState.isRunning)
-                        MaterialTheme.colorScheme.error
-                    else
-                        MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Icon(
-                    imageVector = if (uiState.isRunning) Icons.Default.Stop else Icons.Default.PlayArrow,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(
-                    text = if (uiState.isRunning) "Stop Timer" else "Start Timer",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-
-            // Status Card
-            if (uiState.isRunning) {
+            item {
+                // Timer Configuration Card
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = "Timer Running",
-                            style = MaterialTheme.typography.headlineSmall
+                            text = stringResource(R.string.timer_configuration),
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.padding(bottom = 16.dp)
                         )
+
+                        // Activity Time Slider
                         Text(
-                            text = "Current Phase: ${uiState.currentPhase.name}",
+                            text = stringResource(R.string.activity_time) + ": ${uiState.config.activityMinutes} " + stringResource(
+                                R.string.minutes
+                            ),
                             style = MaterialTheme.typography.bodyLarge
                         )
+                        Slider(
+                            value = uiState.config.activityMinutes.toFloat(),
+                            onValueChange = { viewModel.updateActivityMinutes(it.toInt()) },
+                            valueRange = 10f..120f,
+                            steps = 109,
+                            enabled = !uiState.isRunning,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+
+                        // Rest Time Slider
+                        Text(
+                            text = stringResource(R.string.rest_time) + ": ${uiState.config.restMinutes} " + stringResource(
+                                R.string.minutes
+                            ),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Slider(
+                            value = uiState.config.restMinutes.toFloat(),
+                            onValueChange = { viewModel.updateRestMinutes(it.toInt()) },
+                            valueRange = 5f..180f,
+                            steps = 174,
+                            enabled = !uiState.isRunning
+                        )
                     }
                 }
-            }
 
-            // Stats Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Statistics",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                // Start/Stop Button
+                Button(
+                    onClick = {
+                        if (uiState.isRunning) {
+                            viewModel.stopTimer()
+                        } else {
+                            viewModel.startTimer()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(bottom = 16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (uiState.isRunning)
+                            MaterialTheme.colorScheme.error
+                        else
+                            MaterialTheme.colorScheme.primary
                     )
-                    Text("Total Sessions: ${uiState.totalCompletedSessions}")
-                    Text("Total Cycles: ${uiState.totalCompletedCycles}")
+                ) {
+                    Icon(
+                        imageVector = if (uiState.isRunning) Icons.Default.Stop else Icons.Default.PlayArrow,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = if (uiState.isRunning) stringResource(R.string.stop_timer) else stringResource(
+                            R.string.start_timer
+                        ),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                // Status Card
+                if (uiState.isRunning) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(R.string.timer_running),
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                            Text(
+                                text = stringResource(
+                                    R.string.current_phase_format,
+                                    uiState.currentPhase.name
+                                ),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
+
+                // Stats Card
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.statistics),
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            stringResource(
+                                R.string.total_sessions_format,
+                                uiState.totalCompletedSessions
+                            )
+                        )
+                        Text(
+                            stringResource(
+                                R.string.total_cycles_format,
+                                uiState.totalCompletedCycles
+                            )
+                        )
+                    }
+                }
+
+                // Recent Sessions Title
+                if (uiState.recentSessions.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.recent_sessions),
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
                 }
             }
 
-            // Recent Sessions
+            // Recent Sessions List
             if (uiState.recentSessions.isNotEmpty()) {
-                Text(
-                    text = "Recent Sessions",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-
-                LazyColumn {
-                    items(uiState.recentSessions.take(5)) { session ->
-                        SessionItem(session = session)
-                    }
+                items(uiState.recentSessions.take(5)) { session ->
+                    SessionItem(session = session)
                 }
             }
         }

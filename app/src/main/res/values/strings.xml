@@ -13,4 +13,11 @@
     <string name="activity_phase">Time to be active!</string>
     <string name="rest_phase">Time to rest</string>
     <string name="timer_notification_title">Interval Timer</string>
+    <string name="timer_configuration">Timer Configuration</string>
+    <string name="statistics">Statistics</string>
+    <string name="current_phase_format">Current Phase: %1$s</string>
+    <string name="total_sessions_format">Total Sessions: %1$d</string>
+    <string name="total_cycles_format">Total Cycles: %1$d</string>
+    <string name="recent_sessions">Recent Sessions</string>
+    <string name="timer_running">Timer Running</string>
 </resources>
